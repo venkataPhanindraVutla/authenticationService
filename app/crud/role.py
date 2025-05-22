@@ -1,9 +1,22 @@
 # File: app/crud/role.py
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.db.models.role import Role
 
-def get_role_by_name(db: Session, name: str):
-    return db.query(Role).filter(Role.name == name).first()
+async def get_role_by_name(db: AsyncSession, name: str):
+    try:
+        result = await db.execute(select(Role).filter(Role.name == name))
+        return result.scalars().first()
+    except Exception as e:
+        # Log the error or handle it appropriately
+        print(f"Error getting role by name: {e}")
+        return None
 
-def get_role(db: Session, role_id: int):
-    return db.query(Role).filter(Role.id == role_id).first()
+async def get_role(db: AsyncSession, role_id: int):
+    try:
+        result = await db.execute(select(Role).filter(Role.id == role_id))
+        return result.scalars().first()
+    except Exception as e:
+        # Log the error or handle it appropriately
+        print(f"Error getting role by ID: {e}")
+        return None
